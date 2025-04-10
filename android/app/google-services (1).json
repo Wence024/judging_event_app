@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "827968908924",
+    "project_id": "judge-8186a",
+    "storage_bucket": "judge-8186a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:827968908924:android:60499c8ea8ec726ead63f9",
+        "android_client_info": {
+          "package_name": "com.example.judge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABQ9fR9IHVNbXkYwYcfG9Q-Bzkcl3j-qk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:827968908924:android:e256e5552aeca4efad63f9",
+        "android_client_info": {
+          "package_name": "com.example.judge_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABQ9fR9IHVNbXkYwYcfG9Q-Bzkcl3j-qk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
