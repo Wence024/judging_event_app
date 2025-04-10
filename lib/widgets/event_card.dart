@@ -9,6 +9,7 @@ class EventCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final bool showActions;
   final Widget? child;
+  final List<Widget>? actions;
 
   const EventCard({
     Key? key,
@@ -18,6 +19,7 @@ class EventCard extends StatelessWidget {
     this.onDelete,
     this.showActions = true,
     this.child,
+    this.actions,
   }) : super(key: key);
 
   @override
@@ -98,6 +100,7 @@ class EventCard extends StatelessWidget {
                         variant: ButtonVariant.error,
                       ),
                     ],
+                    if (actions != null) ...actions!,
                   ],
                 ),
               ],

@@ -13,6 +13,7 @@ import '../widgets/error_widget.dart';
 import '../widgets/confirm_dialog.dart';
 import 'create_event_screen.dart';
 import 'manage_users_screen.dart';
+import 'tabulation_screen.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({Key? key}) : super(key: key);
@@ -215,6 +216,69 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return [];
   }
 
+  void _createParticipant() async {
+    final participantName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController();
+        return AlertDialog(
+          title: const Text('Create Participant'),
+          content: TextField(
+            controller: controller,
+            decoration:
+                const InputDecoration(hintText: 'Enter participant name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, controller.text.trim()),
+              child: const Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (participantName != null && participantName.isNotEmpty) {
+      // Add logic to save the participant
+      print('Participant created: $participantName');
+    }
+  }
+
+  void _createJudge() async {
+    final judgeName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController();
+        return AlertDialog(
+          title: const Text('Create Judge'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Enter judge name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, controller.text.trim()),
+              child: const Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (judgeName != null && judgeName.isNotEmpty) {
+      // Add logic to save the judge
+      print('Judge created: $judgeName');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -282,6 +346,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                 onPressed: () => _assignContestants(event),
                                 tooltip: 'Assign Contestants',
                               ),
+                              IconButton(
+                                icon: const Icon(Icons.bar_chart),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          TabulationScreen(event: event),
+                                    ),
+                                  );
+                                },
+                                tooltip: 'View Results',
+                              ),
                             ],
                           )),
                       const SizedBox(height: 32),
@@ -298,6 +374,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             icon: Icons.people,
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 16),
+                      CustomButton(
+                        text: 'Create Participant',
+                        onPressed: _createParticipant,
+                        icon: Icons.person_add,
+                      ),
+                      const SizedBox(height: 8),
+                      CustomButton(
+                        text: 'Create Judge',
+                        onPressed: _createJudge,
+                        icon: Icons.person_add,
                       ),
                       const SizedBox(height: 16),
                       Card(
