@@ -5,6 +5,7 @@ import '../services/event_service.dart';
 import '../services/user_service.dart';
 import '../models/event_model.dart';
 import '../models/user_model.dart';
+import '../models/contestant_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/event_card.dart';
 import '../widgets/loading_indicator.dart';
@@ -120,7 +121,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
           content: SizedBox(
             width: double.maxFinite,
             child: ListView(
-              children: _users.map((user) {
+              children: _users
+                  .where((user) => user.role == UserRole.judge)
+                  .map((user) {
                 return CheckboxListTile(
                   title: Text(user.name),
                   value: selected.contains(user.id),
@@ -156,6 +159,60 @@ class _AdminDashboardState extends State<AdminDashboard> {
       await _eventService.updateEvent(updatedEvent);
       await _loadData();
     }
+  }
+
+  void _assignContestants(EventModel event) async {
+    final contestants = await _fetchContestants();
+    final selectedContestants = await showDialog<List<String>>(
+      context: context,
+      builder: (context) {
+        final selected = <String>{};
+        return AlertDialog(
+          title: const Text('Assign Contestants'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              children: contestants.map((contestant) {
+                return CheckboxListTile(
+                  title: Text(contestant.name),
+                  value: selected.contains(contestant.id),
+                  onChanged: (isChecked) {
+                    setState(() {
+                      if (isChecked == true) {
+                        selected.add(contestant.id);
+                      } else {
+                        selected.remove(contestant.id);
+                      }
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, null),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, selected.toList()),
+              child: const Text('Assign'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selectedContestants != null) {
+      final updatedEvent = event.copyWith(contestantIds: selectedContestants);
+      await _eventService.updateEvent(updatedEvent);
+      await _loadData();
+    }
+  }
+
+  Future<List<ContestantModel>> _fetchContestants() async {
+    // Implement fetching logic here
+    return [];
   }
 
   @override
@@ -219,6 +276,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                 icon: const Icon(Icons.person_add),
                                 onPressed: () => _assignJudges(event),
                                 tooltip: 'Assign Judges',
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.group_add),
+                                onPressed: () => _assignContestants(event),
+                                tooltip: 'Assign Contestants',
                               ),
                             ],
                           )),
