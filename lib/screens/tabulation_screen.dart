@@ -66,6 +66,43 @@ class _TabulationScreenState extends State<TabulationScreen> {
     return groupedScores;
   }
 
+  List<DataRow> _createDataRows(List<ScoreModel> scores) {
+    // Group scores by contestant
+    final groupedScores = _groupScoresByContestant(scores);
+
+    // Calculate average scores and create a list of maps
+    final scoreList = groupedScores.entries.map((entry) {
+      final contestantId = entry.key;
+      final scores = entry.value;
+      final totalScore = scores
+          .map((score) =>
+              score.scores.values.fold(0.0, (sum, score) => sum + score) /
+              score.scores.length)
+          .reduce((a, b) => a + b);
+      final averageScore = totalScore / scores.length;
+      return {
+        'contestantId': contestantId,
+        'averageScore': averageScore,
+      };
+    }).toList();
+
+    // Sort the list by average score
+    scoreList.sort((a, b) =>
+        (b['averageScore'] as double).compareTo(a['averageScore'] as double));
+
+    // Convert to DataRow objects
+    return scoreList.asMap().entries.map((entry) {
+      final rank = entry.key + 1;
+      final contestantId = entry.value['contestantId'] as String;
+      final averageScore = entry.value['averageScore'] as double;
+      return DataRow(cells: [
+        DataCell(Text(rank.toString())),
+        DataCell(Text(contestantId)), // Replace with contestant name
+        DataCell(Text(averageScore.toStringAsFixed(2))),
+      ]);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,27 +128,11 @@ class _TabulationScreenState extends State<TabulationScreen> {
                       const SizedBox(height: 16),
                       DataTable(
                         columns: const [
+                          DataColumn(label: Text('Rank')),
                           DataColumn(label: Text('Contestant')),
                           DataColumn(label: Text('Average Score')),
                         ],
-                        rows: _groupScoresByContestant(_scores)
-                            .entries
-                            .map((entry) {
-                          final contestantId = entry.key;
-                          final scores = entry.value;
-                          final totalScore = scores
-                              .map((score) =>
-                                  score.scores.values
-                                      .fold(0.0, (sum, score) => sum + score) /
-                                  score.scores.length)
-                              .reduce((a, b) => a + b);
-                          final averageScore = totalScore / scores.length;
-                          return DataRow(cells: [
-                            DataCell(Text(
-                                contestantId)), // Replace with contestant name
-                            DataCell(Text(averageScore.toStringAsFixed(2))),
-                          ]);
-                        }).toList(),
+                        rows: _createDataRows(_scores),
                       ),
                       const SizedBox(height: 32),
                       Text(
